@@ -1,24 +1,61 @@
 {
-    "name": "goalgorilla/social_template",
-    "description": "Social project template for composer based Open Social projects.",
+    "name": "svenbergryen/social_template",
+    "description": "Social project template for composer based Open Social projects and deployed on wodby.",
     "type": "project",
     "license": "GPL-2.0+",
+    "authors": [
+        {
+            "name": "Marlon <marlon@ramsalt.com>",
+            "role": ""
+        },
+        {
+            "name": "Stephan <stephan@ramsalt.com>",
+            "role": ""
+        },
+        {
+            "name": "Sven <sven@ramsalt.com>",
+            "role": ""
+        }
+    ],
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
         "platform": {
             "php": "5.6"
-        }
+        },
+        "sort-packages": true
+    },
+    "autoload": {
+        "classmap": [
+            "scripts/composer/ScriptHandler.php"
+        ]
     },
     "require": {
         "composer/installers": "^1.0",
         "drupal-composer/drupal-scaffold": "^2.0.0",
         "cweagans/composer-patches": "^1.0",
+        "drupal/console": "~1.0",
+        "drush/drush": "~8.0",
         "goalgorilla/open_social": "^1.0",
         "doctrine/cache": "1.6.1",
         "doctrine/collections": "1.4.0",
         "doctrine/common": "2.7.2",
-        "doctrine/inflector": "1.1.0"
+        "doctrine/inflector": "1.1.0",
+        "webflo/drupal-finder": "^0|^1.0.0",
+        "webmozart/path-util": "^2.3",
+        "oomphinc/composer-installers-extender": "^1.1"
+    },
+    "require-dev": {
+        "behat/mink": "~1.7",
+        "behat/mink-goutte-driver": "~1.2",
+        "jcalderonzumba/gastonjs": "~1.0.2",
+        "jcalderonzumba/mink-phantomjs-driver": "~0.3.1",
+        "mikey179/vfsstream": "~1.2",
+        "phpunit/phpunit": ">=4.8.28 <5",
+        "symfony/css-selector": "~2.8"
+    },
+    "conflict": {
+        "drupal/drupal": "*"
     },
     "repositories": [
         {
@@ -31,12 +68,19 @@
         }
     ],
     "scripts": {
-      "post-install-cmd": [
-        "DrupalComposer\\DrupalScaffold\\Plugin::scaffold"
-      ],
-      "post-update-cmd": [
-        "DrupalComposer\\DrupalScaffold\\Plugin::scaffold"
-      ]
+        "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
+        "pre-install-cmd": [
+            "DrupalProject\\composer\\ScriptHandler::checkComposerVersion"
+        ],
+        "pre-update-cmd": [
+            "DrupalProject\\composer\\ScriptHandler::checkComposerVersion"
+        ],
+        "post-install-cmd": [
+            "DrupalProject\\composer\\ScriptHandler::createRequiredFiles"
+        ],
+        "post-update-cmd": [
+            "DrupalProject\\composer\\ScriptHandler::createRequiredFiles"
+        ]
     },
     "extra": {
         "installer-types": [
@@ -44,22 +88,22 @@
             "npm-asset"
         ],
         "installer-paths": {
-            "html/core": [
+            "web/core": [
                 "drupal/core"
             ],
-            "html/modules/contrib/{$name}": [
+            "web/modules/contrib/{$name}": [
                 "type:drupal-module"
             ],
-            "html/profiles/contrib/social": [
+            "web/profiles/contrib/social": [
                 "goalgorilla/open_social"
             ],
-            "html/profiles/contrib/{$name}": [
+            "web/profiles/contrib/{$name}": [
                 "type:drupal-profile"
             ],
-            "html/themes/contrib/{$name}": [
+            "web/themes/contrib/{$name}": [
                 "type:drupal-theme"
             ],
-            "html/libraries/{$name}": [
+            "web/libraries/{$name}": [
                 "type:drupal-library",
                 "type:bower-asset",
                 "type:npm-asset"
@@ -68,6 +112,13 @@
                 "type:drupal-drush"
             ]
         },
-        "enable-patching": true
+        "drupal-scaffold": {
+            "excludes": [
+                "sites/development.services.yml",
+                "sites/example.settings.local.php"
+            ]
+        },
+        "enable-patching": true,
+        "patches-file": "composer.patches.json"
     }
 }
